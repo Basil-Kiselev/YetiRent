@@ -9,21 +9,22 @@ class Validate {
         $this->password = $password;        
     }
 
-    public function trimData (){
-        $trimDataEmail = trim($this->email);
-        $trimDataPass = trim($this->password);
-        $trimData['email'] = $trimDataEmail;
-        $trimData['password'] = $trimDataPass;
-        return $trimData; 
-    }    
+    public function run(): array
+    {
+        $errors = [];
 
-    public function validatePassword (){
-        $trimData = self::trimData();
+        if (empty($this->email)) {
+            $errors['email'][] = "field required";
+        } 
 
-            if(strlen($trimData['password']) < 5){
-                echo "Length password less 5 symbols";
-            } else {                
-                return $trimData;           
-            }
+        if (empty($this->password)) {
+            $errors['password'][] = "field required"; 
+        }
+        
+        if (strlen($this->password) < 5) {
+            $errors['password'][] = "length password less 5 symbols";
+        }
+
+        return $errors;
     }
 }

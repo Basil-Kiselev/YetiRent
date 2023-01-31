@@ -1,5 +1,6 @@
 <?php
-  session_start();
+
+session_start();
 
 ?>
 <!DOCTYPE html>
@@ -11,34 +12,8 @@
     <title>Yeti Rent</title>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
 </head>
-<body>
-  <nav class="navbar navbar-expand-xl" style="background-color: #e3f2fd;">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="index.php">Yeti Rent</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link " href="#">How it work</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Catalogue</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Pricing</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">About us</a>
-          </li>        
-          <li class="nav-item">
-          <a class="nav-link" href="login.php">Login</a>
-          </li>        
-        </ul>        
-      </div>
-    </div>
-  </nav>  
+<body style = "background-image: url(images/bg1.jpg); background-size: cover;">
+  <?php require_once "navbar.php"; ?>
   <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html> 

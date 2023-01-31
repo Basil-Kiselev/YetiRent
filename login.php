@@ -1,32 +1,26 @@
 <?php  
+
 session_start();
 
-require_once "datasource/dbdriver.php";
+require_once "services/auth.php";
 require_once "services/validator.php";
 
-if($_SERVER['REQUEST_METHOD'] === 'POST'){
-    $mysql = new DbDriver('localhost', 'root', '','yeti_rent');
-    $validData = new Validate($_POST['email'],$_POST['password']);
-    $validData = $validData->trimData();
-    $userData = $mysql->getUserData($validData['email']);
+if($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
+    $validator = new Validate($email,$password);
+    $errors = $validator->run();
 
-        if(empty($userData)){
-            echo "User not found";
-        } else {
-            if($userData['email'] === $validData['email'] && $userData['password'] === $validData['password']){
-              session_start();
-              $_SESSION['username'] = $userData['email'];
-              header("location: intropage.php");
-            } else {
-                  echo "Wrong email or password";
-            }
-        }        
+    if (empty($errors)) {
+        try {
+          $userData = (new Auth())->login($email, $password); 
+          header("location:intropage.php");          
+        } 
+        catch (Exception $e) {
+          $errors['password'][] = $e->getMessage();
+        }
+    }         
 }
-
-
-
-
-
 ?>
 
 <!DOCTYPE html>
@@ -38,53 +32,39 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     <title>Yeti Rent</title>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
 </head>
-<body>
-  <nav class="navbar navbar-expand-lg" style="background-color: #e3f2fd;">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="index.php">Yeti Rent</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link " href="#">How it work</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Catalogue</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Pricing</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">About us</a>
-          </li>        
-        </ul>
-        <ul class="nav justify-content-end">
-          <li class="nav-item">
-            <a class="nav-link" href="login.php">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="register.php">Registration</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Basket</a>
-          </li>        
-        </ul>
-      </div>
-    </div>
-  </nav>
-  <form action="login.php" method="post">
-  <div class="mb-3">
+<body style = "background-image: url(images/bg1.jpg); background-size: cover;">
+  <?php require_once "navbar.php"; ?>
+  <form style="width: 400px; margin: auto; padding: 50px;" action="login.php" method="post">
+    <div class="mb-3" style="text-align: center;">
     <label for="exampleInputEmail1" class="form-label">Email</label>
-    <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+    <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">    
       </div>
-  <div class="mb-3">
+      </div>
+      <div style="color: red;">
+        <?php
+        if (!empty($errors['email'])) {
+            foreach ($errors['email'] as $errEmail){?>
+            <ul>
+              <li><?=($errEmail. ' ');?></li></ul> 
+            <?php }} ?>
+      </div>
+    <div class="mb-3" style="text-align: center;">
     <label for="exampleInputPassword1" class="form-label">Password</label>
     <input type="password" name="password" class="form-control" id="exampleInputPassword1">
-  </div>
-    <button type="submit" class="btn btn-primary">Login</button>
-</form>
+    </div>
+    <div style="color: red;">
+        <?php
+        if (!empty($errors['password'])) {
+            foreach ($errors['password'] as $errPass){?>
+            <ul>
+              <li><?=($errPass. ' ');?></li></ul> 
+            <?php }} ?>
+    </div>
+    <button type="submit" class="btn btn-primary" style="margin: 0 auto; display: block;">Login</button>     
+  </form>
+  <div style="margin: 0 auto;text-align: center">
+    <a href="register.php"><b>Create new account</b></a>
+  </div>  
   <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
-</html>
+</html> 

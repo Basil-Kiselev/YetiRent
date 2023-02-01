@@ -16,4 +16,3 @@ session_start();
   <?php require_once "navbar.php"; ?>
   <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
-</html> 
